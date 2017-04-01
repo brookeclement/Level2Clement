@@ -18,10 +18,14 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
 	Font titleFont;
 	int currentState = MENU_STATE;
 	Timer timer;
+	Rocketship rocket;
+	ObjectManager manager = new ObjectManager();
 
 	public GamePanel() {
 		timer = new Timer(1000 / 60, this);
 		titleFont = new Font("Arial", Font.PLAIN, 48);
+		rocket = new Rocketship(250, 700, 50, 50);
+		manager.addObject(rocket);
 	}
 
 	public void startGame() {
@@ -45,6 +49,7 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
 	}
 
 	public void updateGameState() {
+		manager.update();
 
 	}
 
@@ -63,6 +68,7 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
 	public void drawGameState(Graphics b) {
 		b.setColor(Color.BLACK);
 		b.fillRect(0, 0, 500, 800);
+		manager.draw(b);
 	}
 
 	public void drawEndState(Graphics c) {
@@ -88,7 +94,6 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
 
 	@Override
 	public void keyTyped(KeyEvent e) {
-		System.out.println("hullo");
 
 	}
 
@@ -96,6 +101,18 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
 	public void keyPressed(KeyEvent e) {
 		if (e.getKeyCode() == 10) {
 			currentState += 1;
+		} else if (e.getKeyCode() == 37) // left
+		{
+			rocket.update('a');
+		} else if (e.getKeyCode() == 38) // up
+		{
+			rocket.update('b');
+		} else if (e.getKeyCode() == 39) // right
+		{
+			rocket.update('c');
+		} else if (e.getKeyCode() == 40) // down
+		{
+			rocket.update('d');
 		}
 		if (currentState > END_STATE) {
 			currentState = MENU_STATE;
@@ -105,7 +122,6 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
 
 	@Override
 	public void keyReleased(KeyEvent e) {
-		System.out.println("gudbi");
 
 	}
 
