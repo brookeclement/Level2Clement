@@ -5,7 +5,10 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.awt.image.BufferedImage;
+import java.io.IOException;
 
+import javax.imageio.ImageIO;
 import javax.swing.JPanel;
 import javax.swing.Timer;
 
@@ -20,12 +23,26 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
 	Timer timer;
 	Rocketship rocket;
 	ObjectManager manager = new ObjectManager();
+	
+	public static BufferedImage alienImg;
+	public static BufferedImage rocketImg;
+	public static BufferedImage bulletImg;
 
 	public GamePanel() {
 		timer = new Timer(1000 / 60, this);
 		titleFont = new Font("Arial", Font.PLAIN, 48);
 		rocket = new Rocketship(250, 700, 50, 50);
 		manager.addObject(rocket);
+		
+		try {
+			alienImg = ImageIO.read(this.getClass().getResourceAsStream("alien.png"));
+			rocketImg = ImageIO.read(this.getClass().getResourceAsStream("rocket.png"));
+			bulletImg = ImageIO.read(this.getClass().getResourceAsStream("bullet.png"));
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
 	}
 
 	public void startGame() {
@@ -45,12 +62,22 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
 	}
 
 	public void updateMenuState() {
-
+		manager.setScore(0);
 	}
 
 	public void updateGameState() {
 		manager.update();
-
+		manager.manageEnemies();
+		manager.checkCollision();
+		if(rocket.isAlive == false)
+		{
+			currentState = END_STATE;
+			manager.reset();
+			rocket = new Rocketship(250, 700, 50, 50);
+			manager.addObject(rocket);
+			
+		}
+		manager.getScore();
 	}
 
 	public void updateEndState() {
@@ -77,6 +104,7 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
 		c.setColor(Color.black);
 		c.setFont(titleFont);
 		c.drawString("GAME OVER", 100, 400);
+		c.drawString("Score: " + manager.getScore(), 100, 500);
 	}
 
 	@Override
@@ -101,18 +129,22 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
 	public void keyPressed(KeyEvent e) {
 		if (e.getKeyCode() == 10) {
 			currentState += 1;
-		} else if (e.getKeyCode() == 37) // left
+		} if (e.getKeyCode() == 37) // left
 		{
 			rocket.update('a');
-		} else if (e.getKeyCode() == 38) // up
+		} if (e.getKeyCode() == 38) // up
 		{
 			rocket.update('b');
-		} else if (e.getKeyCode() == 39) // right
+		} if (e.getKeyCode() == 39) // right
 		{
 			rocket.update('c');
-		} else if (e.getKeyCode() == 40) // down
+		} if (e.getKeyCode() == 40) // down
 		{
 			rocket.update('d');
+		}
+		if(e.getKeyCode() == 32)
+		{
+			manager.addObject(new Projectile(rocket.x+20, rocket.y, 10, 10));
 		}
 		if (currentState > END_STATE) {
 			currentState = MENU_STATE;
@@ -122,6 +154,24 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
 
 	@Override
 	public void keyReleased(KeyEvent e) {
+		if(e.getKeyCode() == KeyEvent.VK_LEFT)
+		{
+			rocket.left = false;
+		}
+		
+		if(e.getKeyCode() == KeyEvent.VK_UP)
+		{
+			rocket.up = false;
+		}
+		if(e.getKeyCode() == KeyEvent.VK_RIGHT)
+		{
+			rocket.right = false;
+		}
+		if(e.getKeyCode() == KeyEvent.VK_DOWN)
+		{
+			rocket.down = false;
+		}
+		
 
 	}
 
