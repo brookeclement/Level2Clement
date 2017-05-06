@@ -2,8 +2,8 @@ import javax.swing.JFrame;
 
 public class HiddenGame {
 	
-	final int WIDTH = 800;
-	final int HEIGHT = 800;
+	static final int WIDTH = 800;
+	static final int HEIGHT = 800;
 	
 	JFrame frame;
 	HiddenPanel panel;

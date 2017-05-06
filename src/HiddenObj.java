@@ -19,6 +19,8 @@ public class HiddenObj {
 
 	public void update() {
 		collisionBox.setBounds(x, y, width, height);
+		x++;
+		y++;
 	}
 
 	public void draw(Graphics g) {
